@@ -21,6 +21,22 @@ while True:
     import matplotlib.pyplot as plt
     from IPython import display
 
+    ######################################
+    # Section for any and all cited code:
+    #           cited as per MIT style rules, cited inline as Cit01
+    # Citation 01:
+    #       https://youtu.be/L8ypSXwyBds retrieved 4/22/2023
+    #
+    #       Some of the functions: plot, QTrainerSnake, LinearQNet
+    #       Some of the run==0 and run==2 While loops
+    #
+    #           Despite this citation, a fair bit of what is cited is standard as
+    #           per pytorch library documentation, such as remember, the memory training and some
+    #           other things not listed as cited inline.
+    #
+    #       End of Citation 01
+    ######################################
+
     # initialize pygame
     pygame.init()
 
@@ -91,9 +107,9 @@ while True:
         display.clear_output(wait=True)
         display.display(plt.gcf())
         plt.clf()
-        plt.title('Training...')
-        plt.xlabel('Number of Games')
-        plt.ylabel('Score')
+        plt.title('Training...')  # Cit01
+        plt.xlabel('Number of Games')  # Cit01
+        plt.ylabel('Score')  # Cit01
         plt.plot(scores)
         plt.plot(meanScores)
         plt.ylim(ymin=0)
@@ -102,7 +118,7 @@ while True:
         plt.show(block=False)
         plt.pause(.1)
 
-    class snakeLinearQNet(nn.Module):
+    class snakeLinearQNet(nn.Module):  # Cit01, but also largely standard documentation
         def __init__(self, inputSize, hiddenSize, outputSize):
             super().__init__()
             self.linear1 = nn.Linear(inputSize, hiddenSize)
@@ -136,7 +152,7 @@ while True:
             reward = torch.tensor(reward, dtype=torch.float)
             # (n, x)
 
-            if len(state.shape) == 1:
+            if len(state.shape) == 1: # Cit01
                     # (1, x)
                 state = torch.unsqueeze(state, 0)
                 stateNext = torch.unsqueeze(stateNext, 0)
@@ -148,7 +164,7 @@ while True:
             pred = self.model(state)
 
             target = pred.clone()
-            for idx in range(len(gameOver)):
+            for idx in range(len(gameOver)): # Cit01
                 QNew = reward[idx]
                 if not gameOver[idx]:
                     QNew = reward[idx] + self.gamma * torch.max(self.model(stateNext[idx]))
@@ -173,9 +189,6 @@ while True:
         pygame.init()
         font = pygame.font.SysFont('calibri', 25)
 
-
-        # font = pygame.font.SysFont('arial', 25)
-
         class Direction(Enum):
             RIGHT = 1
             LEFT = 2
@@ -188,19 +201,19 @@ while True:
         # rgb colors
         white = (255, 255, 255)
         red = (200, 0, 0)
-        blue1 = (0, 0, 255)
-        blue2 = (0, 100, 255)
+        blue1 = (0, 0, 255)  # Cit01 for two colored snake rects idea
+        blue2 = (0, 100, 255)  # Cit01 for two colored snake rects idea
         black = (0, 0, 0)
 
         BLOCK_SIZE = 20
-        SPEED = 20
+        SPEED = 20  # Cit01 specifically for how this variable works as opposed to fps
 
 
         class SnakeGame:
 
             def __init__(self, w=640, h=480):
-                self.w = w
-                self.h = h
+                self.w = w  # Cit01
+                self.h = h  # Cit01
                 # init display
                 self.display = pygame.display.set_mode((self.w, self.h))
                 pygame.display.set_caption('Snake')
@@ -209,10 +222,10 @@ while True:
                 # init game state
                 self.direction = Direction.RIGHT
 
-                self.head = Point(self.w / 2, self.h / 2)
-                self.snake = [self.head,
-                              Point(self.head.x - BLOCK_SIZE, self.head.y),
-                              Point(self.head.x - (2 * BLOCK_SIZE), self.head.y)]
+                self.head = Point(self.w / 2, self.h / 2)  # Cit01
+                self.snake = [self.head,  # Cit01
+                              Point(self.head.x - BLOCK_SIZE, self.head.y),  # Cit01
+                              Point(self.head.x - (2 * BLOCK_SIZE), self.head.y)]  # Cit01
 
                 self.score = 0
                 self.food = None
@@ -264,7 +277,7 @@ while True:
                 # 6. return game over and score
                 return gameOver, self.score
 
-            def _isCollision(self):
+            def _isCollision(self):  # Cit01
                 # hits boundary
                 if self.head.x > self.w - BLOCK_SIZE or self.head.x < 0 or self.head.y > self.h - BLOCK_SIZE or self.head.y < 0:
                     return True
@@ -278,8 +291,8 @@ while True:
                 self.display.fill(black)
 
                 for pt in self.snake:
-                    pygame.draw.rect(self.display, blue1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
-                    pygame.draw.rect(self.display, blue2, pygame.Rect(pt.x + 4, pt.y + 4, 12, 12))
+                    pygame.draw.rect(self.display, blue1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))  # Cit01 two colored snake
+                    pygame.draw.rect(self.display, blue2, pygame.Rect(pt.x + 4, pt.y + 4, 12, 12))  # Cit01 two colored snake idea
 
                 pygame.draw.rect(self.display, red, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
 
@@ -533,7 +546,8 @@ while True:
             self.model = snakeLinearQNet(11, 256, 3)
             self.trainer = QTrainerSnake(self.model, lr=LR, gamma=self.gamma)
 
-        def getState(self, game):
+        def getState(self, game):  # Cit01, this is the one thing I was
+                                   # completely lost on without the cited source
             head = game.snake[0]
             pointL = Point(head.x - 20, head.y)
             pointR = Point(head.x + 20, head.y)
@@ -592,7 +606,7 @@ while True:
         def trainShortMemory(self, state, action, reward, nextState, gameOver):
             self.trainer.trainStep(state, action, reward, nextState, gameOver)
 
-        def getAction(self, state):
+        def getAction(self, state):  # Cit01
             # random moves: tradeoff exploration / exploitation
             self.epsilon = 80 - self.numGames
             finalMove = [0,0,0]
@@ -607,7 +621,7 @@ while True:
 
             return finalMove
 
-    def snakeTrain():
+    def snakeTrain():  # Cit01
         global numGames
         plotScores = []
         plotMeanScores = []
@@ -615,7 +629,7 @@ while True:
         record = 0
         agent = snakeAgent()
         game = SnakeAI()
-        while True:
+        while True:  # Cit01
             # get old state
             stateOld = agent.getState(game)
 
@@ -668,8 +682,6 @@ while True:
         font = pygame.font.SysFont('calibri', 25)
 
 
-        # font = pygame.font.SysFont('arial', 25)
-
         class Direction(Enum):
             RIGHT = 1
             LEFT = 2
@@ -682,19 +694,19 @@ while True:
         # rgb colors
         white = (255, 255, 255)
         red = (200, 0, 0)
-        blue1 = (0, 0, 255)
-        blue2 = (0, 100, 255)
+        blue1 = (0, 0, 255)  # Cit01
+        blue2 = (0, 100, 255)  # Cit01
         black = (0, 0, 0)
 
         BLOCK_SIZE = 20
-        SPEED = 120 #snake game for player at 20
+        SPEED = 120  #snake game for player at 20
 
 
         class SnakeAI:
 
             def __init__(self, w=640, h=480):
-                self.w = w
-                self.h = h
+                self.w = w  # Cit01
+                self.h = h  # Cit01
                 # init display
                 self.display = pygame.display.set_mode((self.w, self.h))
                 pygame.display.set_caption('Snake')
@@ -703,10 +715,10 @@ while True:
                 # init game state
                 self.direction = Direction.RIGHT
 
-                self.head = Point(self.w / 2, self.h / 2)
-                self.snake = [self.head,
-                              Point(self.head.x - BLOCK_SIZE, self.head.y),
-                              Point(self.head.x - (2 * BLOCK_SIZE), self.head.y)]
+                self.head = Point(self.w / 2, self.h / 2)  # Cit01
+                self.snake = [self.head,  # Cit01
+                              Point(self.head.x - BLOCK_SIZE, self.head.y),  # Cit01
+                              Point(self.head.x - (2 * BLOCK_SIZE), self.head.y)]  # Cit01
 
                 self.score = 0
                 self.food = None
@@ -768,7 +780,7 @@ while True:
                 # 6. return game over and score
                 return reward, gameOver, self.score
 
-            def isCollision(self, pt=None):
+            def isCollision(self, pt=None):  # Cit01
                 if pt is None:
                     pt = self.head
                 # hits boundary
@@ -784,8 +796,8 @@ while True:
                 self.display.fill(black)
 
                 for pt in self.snake:
-                    pygame.draw.rect(self.display, blue1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
-                    pygame.draw.rect(self.display, blue2, pygame.Rect(pt.x + 4, pt.y + 4, 12, 12))
+                    pygame.draw.rect(self.display, blue1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))  # Cit01
+                    pygame.draw.rect(self.display, blue2, pygame.Rect(pt.x + 4, pt.y + 4, 12, 12))  # Cit01
 
                 pygame.draw.rect(self.display, red, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
 
@@ -796,15 +808,15 @@ while True:
             def _move(self, action):
                 # [straight, right, left]
 
-                clockwise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
-                idx = clockwise.index(self.direction)
+                clockwise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]  # Cit01
+                idx = clockwise.index(self.direction)  # Cit01
 
-                if np.array_equal(action, [1, 0, 0]):
+                if np.array_equal(action, [1, 0, 0]):  # Cit01
                     newDir = clockwise[idx]
-                elif np.array_equal(action, [0, 1, 0]):
+                elif np.array_equal(action, [0, 1, 0]):  # Cit01
                     nextIdx = (idx + 1) % 4 #clockwise turn
                     newDir = clockwise[nextIdx]
-                else:
+                else:  # Cit01
                     nextIdx = (idx - 1) % 4 #counterclockwise turn
                     newDir = clockwise[nextIdx]
 
